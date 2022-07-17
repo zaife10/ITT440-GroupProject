@@ -71,6 +71,7 @@ def accept_clients(the_server, y):
         client, addr = the_server.accept()
         clients.append(client)
 
+<<<<<<< HEAD
         
         threading._start_new_thread(send_receive_client_message, (client, addr))
         
@@ -140,5 +141,10 @@ def update_client_names_display(name_list):
 window.mainloop()
 
 
+        threading._start_new_thread(send_receive_client_message, (client, addr))
 
 
+>>>>>>> 6117712c715dd47350efc8c4d22e672f854432c6
+
+
+# Function to receive message from current client A
