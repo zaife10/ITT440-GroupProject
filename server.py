@@ -33,7 +33,46 @@ scrollBar.config(command=tkDisplay.yview)
 tkDisplay.config(yscrollcommand=scrollBar.set, background="#F4F6F7", highlightbackground="grey", state="disabled")
 clientFrame.pack(side=tk.BOTTOM, pady=(5, 10))
 
+HOST_ADDR = "192.168.56.110"
+HOST_PORT = 8080
+client_name = " "
+clients = []
+clients_names = []
 
+
+# Start server function
+def start_server():
+    global server, HOST_ADDR, HOST_PORT 
+    btnStart.config(state=tk.DISABLED)
+    btnStop.config(state=tk.NORMAL)
+
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print(socket.AF_INET)
+    print(socket.SOCK_STREAM)
+
+    server.bind((HOST_ADDR, HOST_PORT))
+    server.listen(5)  # server is listening for client connection
+
+    threading._start_new_thread(accept_clients, (server, " "))
+
+    lblHost["text"] = "Host: " + HOST_ADDR
+    lblPort["text"] = "Port: " + str(HOST_PORT)
+
+
+# Stop server function
+def stop_server():
+    global server
+    btnStart.config(state=tk.NORMAL)
+    btnStop.config(state=tk.DISABLED)
+
+
+def accept_clients(the_server, y):
+    while True:
+        client, addr = the_server.accept()
+        clients.append(client)
+
+
+        threading._start_new_thread(send_receive_client_message, (client, addr))
 
 
 
