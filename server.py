@@ -77,3 +77,43 @@ def accept_clients(the_server, y):
 
 
 
+# Function to receive message from current client AND
+# Send that message to other clients
+def send_receive_client_message(client_connection, client_ip_addr):
+    global server, client_name, clients, clients_addr
+    client_msg = " "
+
+    # send welcome message to client
+    client_name  = client_connection.recv(4096).decode()
+    welcome_msg = "Welcome " + client_name + ". Use 'exit' to quit"
+    client_connection.send(welcome_msg.encode())
+
+    clients_names.append(client_name)
+
+    update_client_names_display(clients_names)  # update client names display
+
+
+    while True:
+        data = client_connection.recv(4096).decode()
+        if not data: break
+        if data == "exit": break
+
+        client_msg = data
+
+        idx = get_client_index(clients, client_connection)
+        sending_client_name = clients_names[idx]
+
+        for c in clients:
+            if c != client_connection:
+                server_msg = str(sending_client_name + "->" + client_msg)
+                c.send(server_msg.encode())
+
+    # find the client index then remove from both lists(client name list and connection list)
+    idx = get_client_index(clients, client_connection)
+    del clients_names[idx]
+    del clients[idx]
+    server_msg = "BYE!"
+    client_connection.send(server_msg.encode())
+    client_connection.close()
+
+    update_client_names_display(clients_names)  # update client names display
